@@ -23,12 +23,11 @@ void Clock(void) {
 			numToString(sys_tick/100, str);
 			p = (unsigned short*) VIDEO_START;
 			p = p + 0x4b;
-		//Problem is somewhere here, only shows one digit
 			for(i = strSize; i >= 0; i--)
 			{
 				*p = str[i] + VIDEO_MASK;
 				p--;
-			}
+			}		//Displays all four digits, will fix in later versions
 		}
 	}
 	return;
