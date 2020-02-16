@@ -47,6 +47,14 @@ void numToString(int number, char stringAddr[]) {
 		stringAddr[i] = ((number / temp) % 10) + 0x30;
 	}
 	stringAddr[stringCounter(stringAddr)] = '\0';
+	
+	//this while loop fixes the leading zeros
+	int head = 0;
+	while (stringAddr[head] == 0x30 && head != 3)
+	{
+		stringAddr[x] = 0x20;
+		x++;
+	}
 	return;
 }
 
