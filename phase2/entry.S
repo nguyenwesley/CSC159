@@ -25,7 +25,11 @@ ENTRY(TimerEntry)					// push efl, cs, eip by hardware
 
 
 
-//phase2 code
+/*
+*
+*	phase2
+*
+*/
 ENTRY(GetTimeEntry)
 	pushl $GET_TIME
 	pushal

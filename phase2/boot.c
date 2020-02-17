@@ -1,4 +1,4 @@
-// boot.c, 159, phase 1
+// boot.c, 159, phase 2
 //
 // Team Name: SOSOS (Members: David Williams, Wesley Nguyen, Yamini Dasu)
 
@@ -65,6 +65,7 @@ void main(void) {				// kernel boots
 	*/
 	Bzero((char *)&kb, sizeof(kb_t));
 	(kb.wait_q).head = (kb.wait_q).tail = (kb.wait_q).size = 0;
+	//add 3 new entries into the intr_table, in the corresponding entries (values in kernel.h)
 	
 	unused_q.head = unused_q.tail = unused_q.size = 0;
 	ready_q.head = ready_q.tail = ready_q.size = 0;
@@ -80,6 +81,7 @@ void main(void) {				// kernel boots
 	outportb(PIC_MASK_REG, PIC_MASK);
 
    	CreateProc((func_p_t *) Clock);
+	//phase2, call CreateProc to make Init
 	
 	cur_pid = DeQ(&ready_q);
 	Loader(pcb[cur_pid].tf_p);

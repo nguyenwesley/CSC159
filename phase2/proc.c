@@ -66,3 +66,28 @@ int stringCounter(char myString[]) {
 	}
 	return tempCount;
 }
+
+
+
+/*
+*
+*	phase2
+*
+*/
+void Init(void) {
+	int curTime;
+	char tPrompt[] = "The time is ";
+	char qPrompt[] = "What do you say to a cup of coffee? ";
+	char aPrompt[] = "The answer is ";
+	char time_str[] = "    ";
+	while (1) {
+		curTime = get_time_call();
+		numToString(curTime, time_str);
+		/*
+		*	call write_call to show time_str
+		*	...
+		*	... see demo run to issue calls to perform the same...
+		*	...
+		*/
+	}
+}
