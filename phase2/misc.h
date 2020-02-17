@@ -12,5 +12,8 @@ int DeQ(q_t *);
 void EnQ(int number, q_t *);
 void Bzero(char *, int byteFillLength);
 
+//phase2 prototypes
+void StrAdd(char toAdd, char *string);
+void StrCpy(char *src, char *dest);
 
 #endif

@@ -22,7 +22,6 @@ int QisFull(q_t *Queue) {
 }
 
 
-//Incorrect, must recode
 //edited, but not sure if correct
 int DeQ(q_t *Queue) {
 	int data = 0;
@@ -32,13 +31,15 @@ int DeQ(q_t *Queue) {
 	{
 		data = (*Queue).q[(*Queue).head];
 		(*Queue).head++;
+		//if statement allows circular queue
+		if ((*Queue).head >= Q_SIZE)
+			(*Queue).head = 0;
 		(*Queue).size--;
 	}
 	return data;
 }
 
 
-//Incorrect, must recode
 //edited, but not sure if correct
 void EnQ(int number, q_t *Queue) {
 	if(QisFull(Queue)) {
@@ -47,8 +48,11 @@ void EnQ(int number, q_t *Queue) {
 	}
 	else {
 		(*Queue).q[(*Queue).tail] = number;
-		(*Queue).size++;
+		//if statement allows circular queue
+		if ((*Queue).head >= Q_SIZE)
+			(*Queue).head = 0;
 		(*Queue).tail++;
+		(*Queue).size++;
 	}
 }
 
@@ -60,4 +64,40 @@ void Bzero(char *memoryStart, int byteFillLength) {
 		memoryStart++;
 		tempFillLength--;
 	}
+}
+
+
+//phase2 function
+void StrAdd(char toAdd, char *string[]) {
+	//find end of the string by advancing the pointer
+	while (*string != NUL)
+		string++;
+	
+	/*
+	*
+	*	DOUBLECHECK CODE HERE
+	*
+	*/
+	//Append new character
+	*string = toAdd;
+	//Append NUL to keep strin NUL-delimited
+	string++;
+	*string = NUL;
+}
+
+
+/*
+*
+*	DOUBLECHECK CODE HERE
+*
+*/
+//phase2 function
+void StrCpy(char *src, char *dest) {
+	//Make copy
+	*src = *dest;
+	
+	//Make sure dest copy is NUL-delimited
+	dest++;
+	if (dest != NUL)
+		*dest = NUL;
 }
