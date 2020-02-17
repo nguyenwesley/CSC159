@@ -23,12 +23,10 @@ void Clock(void) {
 			numToString(sys_tick/100, str);
 			p = (unsigned short*) VIDEO_START;
 			p = p + 0x4b;
-			
-			//need to fix
-			for(i = 0; i < strSize; i++)
+			for(i = strSize; i >= 0; i--)
 			{
 				*p = str[i] + VIDEO_MASK;
-				p++;
+				p--;
 			}		//Displays all four digits, will fix in later versions
 		}
 	}
@@ -36,31 +34,23 @@ void Clock(void) {
 }
 
 
-//Adjusted in phase2 to utilize a loop
 void numToString(int number, char stringAddr[]) {
-	int temp, i, counter;
-	for (i = 0; i < stringCounter(stringAddr); i++)
-	{
-		temp = 1000;
-		for (counter = 0; counter < i; counter++)
-			temp = temp / 10;
-		stringAddr[i] = ((number / temp) % 10) + 0x30;
-	}
-	stringAddr[stringCounter(stringAddr)] = '\0';
-	
-	//this while loop fixes the leading zeros
-	int head = 0;
-	while (stringAddr[head] == 0x30 && head != 3)
-	{
-		stringAddr[x] = 0x20;
-		x++;
-	}
+	int a, b, c, d;
+	d = number % 10;
+	c = (number / 10) % 10;
+	b = (number / 100) % 10;
+	a = (number / 1000) % 10;
+	stringAddr[4] = '\0';
+	stringAddr[3] = d + 0x30;
+	stringAddr[2] = c + 0x30;
+	stringAddr[1] = b + 0x30;
+	stringAddr[0] = a + 0x30;
 	return;
 }
 
 
 int stringCounter(char myString[]) {
-	int tempCount = 0;
+	int tempCount = 1;
 	while(myString[tempCount] != '\0') {
 		tempCount++;
 	}

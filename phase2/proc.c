@@ -36,10 +36,10 @@ void Clock(void) {
 }
 
 
-//this code is going from left to right, fix it to go from right to left
 //Adjusted in phase2 to utilize a loop
 void numToString(int number, char stringAddr[]) {
 	int temp, i, counter;
+	int x = 0;
 	for (i = 0; i < stringCounter(stringAddr); i++)
 	{
 		temp = 1000;
@@ -50,8 +50,7 @@ void numToString(int number, char stringAddr[]) {
 	stringAddr[stringCounter(stringAddr)] = '\0';
 	
 	//this while loop fixes the leading zeros
-	int head = 0;
-	while (stringAddr[head] == 0x30 && head != 3)
+	while (stringAddr[x] == 0x30 && x != 3)
 	{
 		stringAddr[x] = 0x20;
 		x++;
