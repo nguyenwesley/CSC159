@@ -12,9 +12,13 @@ __BEGIN_DECLS
 
 /*
 *
-* Change this below
+* phase2, prototyping new trapframes
 *
 */
+void ReadEntry(void);
+void WriteEntry(void);
+void GetTimeEntry(void);
+
 
 void TimerEntry(void);     // coded in entry.S, assembler won't like this syntax
 void Loader(tf_t *);       // coded in entry.S
