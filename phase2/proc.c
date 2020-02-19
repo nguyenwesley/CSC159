@@ -17,7 +17,7 @@ int stringCounter(char myString[]);
 void Clock(void) {
 	int i;
 	int strSize;
-	char str[] = "    ";  // str for 4-digits, plus NUL
+	char str[] = "    ";									// str for 4-digits, plus NUL
 	unsigned short *p;
 	strSize = stringCounter(str);
 	while(1) {
@@ -31,7 +31,7 @@ void Clock(void) {
 			{
 				*p = str[i] + VIDEO_MASK;
 				p++;
-			}		//Displays all four digits, will fix in later versions
+			}
 		}
 	}
 	return;
