@@ -5,6 +5,8 @@
 //include spede.h and kernel.h
 #include "spede.h"
 #include "kernel.h"
+//phase2, need to include syscall.h to call new OS services
+#include "syscall.h"
 
 //prototype any subroutines of Clock() here
 void numToString(int number, char stringAddr[]);
