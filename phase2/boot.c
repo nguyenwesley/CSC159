@@ -78,6 +78,11 @@ void main(void) {				// kernel boots
 	}
 	
    	fill_gate(&intr_table[TIMER], (int)TimerEntry, get_cs(), ACC_INTR_GATE, 0);
+	//phase2, add 3 new entries into the intr_table
+	fill_gate(&intr_table[TIMER], (int)GetTimeEntry, get_cs(), ACC_INTR_GATE, 0);
+	fill_gate(&intr_table[TIMER], (int)WriteEntry, get_cs(), ACC_INTR_GATE, 0);
+	fill_gate(&intr_table[TIMER], (int)ReadEntry, get_cs(), ACC_INTR_GATE, 0);
+	
 	outportb(PIC_MASK_REG, PIC_MASK);
 
    	CreateProc((func_p_t *) Clock);
