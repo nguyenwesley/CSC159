@@ -63,9 +63,8 @@ void main(void) {				// kernel boots
 	*	phase2
 	*
 	*/
-	Bzero((char *)&kb, sizeof(kb_t));
+	Bzero(kb, sizeof(kb_t));
 	(kb.wait_q).head = (kb.wait_q).tail = (kb.wait_q).size = 0;
-	//add 3 new entries into the intr_table, in the corresponding entries (values in kernel.h)
 	
 	unused_q.head = unused_q.tail = unused_q.size = 0;
 	ready_q.head = ready_q.tail = ready_q.size = 0;
@@ -87,7 +86,7 @@ void main(void) {				// kernel boots
 
    	CreateProc((func_p_t *) Clock);
 	//phase2, call CreateProc to make Init
-	
+	CreateProc((func_p_t *) Init);
 	cur_pid = DeQ(&ready_q);
 	Loader(pcb[cur_pid].tf_p);
 }
