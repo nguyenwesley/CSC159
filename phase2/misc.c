@@ -76,6 +76,7 @@ void StrAdd(char toAdd, char *string[]) {
 	//Append NUL to keep strin NUL-delimited
 	string++;
 	*string = NUL;
+	string--;
 }
 
 
@@ -88,4 +89,5 @@ void StrCpy(char *src, char *dest) {
 	dest++;
 	if (dest != NUL)
 		*dest = NUL;
+	dest--;
 }
