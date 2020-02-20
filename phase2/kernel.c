@@ -135,6 +135,12 @@ void ReadService(tf_t *tf_p) {
 	*	call Swapper to find another process to run
 	*	call Loader to load the TF of the newly selected current PID to run it
 	*/
+	pcb[cur_pid].tf_p = tf_p;
+	EnQ(cur_pid, kb.wait_q);
+	pcb[cur_pid].state = WAIT;
+	cur_pid = NA;
+	Swapper();
+	Loader(pcb[cur_pid].tf_p);
 }
 
 
