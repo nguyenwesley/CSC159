@@ -24,19 +24,19 @@ int QisFull(q_t *Queue) {
 
 //edited, but not sure if correct
 int DeQ(q_t *Queue) {
-	int data = 0;
+	int pid;
 	if(QisEmpty(Queue))
 		return NA;
 	else
 	{
-		data = (*Queue).q[(*Queue).head];
+		pid = (*Queue).q[(*Queue).head];
 		(*Queue).head++;
 		//if statement allows circular queue
 		if ((*Queue).head >= Q_SIZE)
 			(*Queue).head = 0;
 		(*Queue).size--;
 	}
-	return data;
+	return pid;
 }
 
 
@@ -48,10 +48,10 @@ void EnQ(int number, q_t *Queue) {
 	}
 	else {
 		(*Queue).q[(*Queue).tail] = number;
-		//if statement allows circular queue
-		if ((*Queue).head >= Q_SIZE)
-			(*Queue).head = 0;
 		(*Queue).tail++;
+		//if statement allows circular queue
+		if ((*Queue).tail >= Q_SIZE)
+			(*Queue).tail = 0;
 		(*Queue).size++;
 	}
 }
