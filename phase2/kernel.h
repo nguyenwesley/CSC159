@@ -66,7 +66,7 @@ typedef struct {									// circular queue
 *
 */
 typedef struct {
-	int buffer[STR_BYES];
+	char buffer[STR_SIZE];
 	q_t wait_q;
 } kb_t;
 
