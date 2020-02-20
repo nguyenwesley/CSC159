@@ -51,7 +51,7 @@ void numToString(int number, char stringAddr[]) {
 	}
 	stringAddr[stringCounter(stringAddr)] = '\0';
 	
-	//this while loop fixes the leading zeros
+	//Removes leading zeros
 	while (stringAddr[x] == 0x30 && x != 3)
 	{
 		stringAddr[x] = 0x20;
@@ -70,12 +70,7 @@ int stringCounter(char myString[]) {
 }
 
 
-
-/*
-*
-*	phase2
-*
-*/
+//phase2
 void Init(void) {
 	int curTime;
 	char tPrompt[] = "The time is ";
