@@ -22,7 +22,6 @@ int QisFull(q_t *Queue) {
 }
 
 
-//edited, but not sure if correct
 int DeQ(q_t *Queue) {
 	int pid;
 	if(QisEmpty(Queue))
@@ -40,7 +39,6 @@ int DeQ(q_t *Queue) {
 }
 
 
-//edited, but not sure if correct
 void EnQ(int number, q_t *Queue) {
 	if(QisFull(Queue)) {
 		cons_printf("Panic: queue is full, cannot EnQ!\n");
@@ -73,11 +71,6 @@ void StrAdd(char toAdd, char *string[]) {
 	while (*string != NUL)
 		string++;
 	
-	/*
-	*
-	*	DOUBLECHECK CODE HERE
-	*
-	*/
 	//Append new character
 	*string = toAdd;
 	//Append NUL to keep strin NUL-delimited
@@ -86,11 +79,6 @@ void StrAdd(char toAdd, char *string[]) {
 }
 
 
-/*
-*
-*	DOUBLECHECK CODE HERE
-*
-*/
 //phase2 function
 void StrCpy(char *src, char *dest) {
 	//Make copy
