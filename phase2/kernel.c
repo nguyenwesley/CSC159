@@ -68,15 +68,13 @@ void Swapper() {
 */
 
 
-void GetTimeService(tft_t *tf_p) {
-	/*
-	*	copy current second # to 'eax' in the TF that tf_p points to
-	*	call Loader with tf_p as the argument to (resume the same process
-	*/
+void GetTimeService(tf_t *tf_p) {
+	tf_p.eax = (sys_tick / 100);
+	Loader(tf_p);
 }
 
 
-void WriteService(tft_t *tf_p) {
+void WriteService(tf_t *tf_p) {
 	/*
 	*	the address of the str to print is given in 'eax' of the TF
 	*	that tf_p points to
@@ -88,30 +86,45 @@ void WriteService(tft_t *tf_p) {
 	*
 	*	call Loader with tf_p as the argument to (resume the same process)
 	*/
+	//THIS IS DEFINITELY WRONG, REVISE
+	while ((*tf_p).eax != '\0') {
+		WriteChar(tf_p.eax);
+		tf_p.eax++;
+	}
+	Loader(tf_p);
 }
 
 
 void WriteChar(char c) {
 	static unsigned short *cursor = (typecast)VIDEO_START;
-	/*
-	*	if 'cursor' is at the beginning of a row, erase that row (with spaces)
-	*	
-	*	if ch is neither CR nor LF {							// it's a regular character
-	*		apply pointer 'cursor' to display the character (arg passed)
-	*		advance 'cursor'
-	*	} else {
-	*		advance cursor to 1st column of next row:
-	*			current column position = (cursor - VIDEO_START) % 80
-	*			remaining columns in this row = 80 - current column position
-	*			add remaining columns to cursor
-	*	}
-	*
-	*	if 'cursor' reaches bottom-right on screen, set it back to top-left
-	*/
+	int curColPos;
+	int remCol;
+	
+	//May need to adjust numbers
+	if (((cursor - VIDEO_START) % 80) == 0) {
+		while ((cursor % 79) != 0) {
+			*cursor = 0x20 + VIDEO_MASK;
+			cursor++;
+		}
+		cursor -= 0x4f;
+	}
+	
+	if (c != CR && c != LF) {
+		*cursor = c + VIDEO_MASK;
+		cursor++;
+	}
+	else {
+		curColPos = (cursor - VIDEO_START) % 80;
+		remCol = 80 - curColPos;
+		cursor += remCol;
+	}
+	
+	if (cursor == (VIDEO_START + 0x78f))
+		cursor = VIDEO_START;
 }
 
 
-void ReadService(tft_t *tf_p) {
+void ReadService(tf_t *tf_p) {
 	/*
 	*	save tf_p to the PCB of the currently-running process
 	*	
