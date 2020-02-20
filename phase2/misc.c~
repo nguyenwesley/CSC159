@@ -73,7 +73,7 @@ void StrAdd(char toAdd, char *string[]) {
 	
 	//Append new character
 	*string = toAdd;
-	//Append NUL to keep string NUL-delimited
+	//Append NUL to keep strin NUL-delimited
 	string++;
 	*string = NUL;
 	string--;
