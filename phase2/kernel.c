@@ -63,11 +63,9 @@ void Swapper() {
 
 /*
 *
-*	phase2, gonna need a lot of work
+*	phase2
 *
 */
-
-
 void GetTimeService(tf_t *tf_p) {
 	tf_p.eax = (sys_tick / 100);
 	Loader(tf_p);
@@ -75,18 +73,7 @@ void GetTimeService(tf_t *tf_p) {
 
 
 void WriteService(tf_t *tf_p) {
-	/*
-	*	the address of the str to print is given in 'eax' of the TF
-	*	that tf_p points to
-	*
-	*	for each char in the string (that's not NUL) {
-	*	call WriteChar with that char as the argument
-	*	advance the string pointer
-	*	}
-	*
-	*	call Loader with tf_p as the argument to (resume the same process)
-	*/
-	//THIS IS DEFINITELY WRONG, REVISE
+	//Doublecheck
 	while ((*tf_p).eax != '\0') {
 		WriteChar(tf_p.eax);
 		tf_p.eax++;
@@ -125,16 +112,6 @@ void WriteChar(char c) {
 
 
 void ReadService(tf_t *tf_p) {
-	/*
-	*	save tf_p to the PCB of the currently-running process
-	*	
-	*	move current PID to the wait queue of the keyboard
-	*	alter its state to WAIT
-	*	current PID becomes NA
-	*	
-	*	call Swapper to find another process to run
-	*	call Loader to load the TF of the newly selected current PID to run it
-	*/
 	pcb[cur_pid].tf_p = tf_p;
 	EnQ(cur_pid, kb.wait_q);
 	pcb[cur_pid].state = WAIT;
@@ -146,20 +123,18 @@ void ReadService(tf_t *tf_p) {
 
 //Lower half of ReadService, called by TimerService()
 void KbService(char c) {
-	/*
-	*	call WriteChar with the character to echo/display it
-	*
-	*	if the character is not CR {						// DOS uses CR
-	*		call StrAdd to add it to the keyboard buffer	// save it
-	*		return;
-	*	}
-	*
-	*	call StrAdd to add a NUL to the keyboard buffer
-	*	realease the process by dequeuing PID from the keyboard wait queue
-	*	the string space is pointed to by 'eax' of the process TF
-	*	call StrCpy to copy the keyboard.buffer to the process string space
-	*	alter the released process state to READY
-	*	move it to the ready queue
-	*	clear/empty the keyboard buffer
-	*/
+	int releasedPID;
+	WriteChar(c);
+	if (c != CR) {
+		StrAdd(c, kb.buffer);
+		return;
+	}
+	
+	StrAdd(NUL, kb.buffer);
+	releasedPID = DeQ(kb.wait_q);
+	//the string space is pointed to by 'eax' of the process TF
+	//call StrCpy to copy the keyboard.buffer to the process string space
+	pcb[releasedPID].state = READY;
+	EnQ(releasedPID, ready_q);
+	Bzero(kb.buffer, STR_SIZE);
 }

@@ -24,17 +24,13 @@ void write_call(char *str) {
 }
 
 //program read_call()...
-/*
-*
-*	THIS NEEDS A TON OF WORK
-*
-*/
-void read_call() {
+//Doublecheck
+void read_call(char c) {
 	
 	asm("movl %0, %%eax;
 		int $50"
        :
-       : "g" 
+       : "g" ((int) c)
        : "eax"
    );
 }

@@ -3,7 +3,7 @@
 #ifndef __MISC__
 #define __MIsC__
 
-#include "kernel.h" // need definition of 'q_t' below
+#include "kernel.h"						// need definition of 'q_t' below
 
 
 int QisEmpty(q_t *);

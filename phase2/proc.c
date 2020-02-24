@@ -86,5 +86,11 @@ void Init(void) {
 		*	... see demo run to issue calls to perform the same...
 		*	...
 		*/
+		write_call(tPrompt);
+		write_call(time_str);
+		write_call(qPrompt);
+		read_call();
+		write_call(aPrompt);
+		read_call();
 	}
 }
