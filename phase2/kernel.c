@@ -73,10 +73,10 @@ void GetTimeService(tf_t *tf_p) {
 
 
 void WriteService(tf_t *tf_p) {
-	//Doublecheck
-	while ((*tf_p).eax != '\0') {
-		WriteChar(tf_p.eax);
-		tf_p.eax++;
+	char *strAddr = (char *)(tf_p).eax;
+	while (*strAddr != '\0') {
+		WriteChar(strAddr);
+		strAddr++;
 	}
 	Loader(tf_p);
 }
@@ -86,16 +86,16 @@ void WriteChar(char c) {
 	static unsigned short *cursor = (typecast)VIDEO_START;
 	int curColPos;
 	int remCol;
-	
+	unsigned short *temp = *cursor;
 	//May need to adjust numbers
 	if (((cursor - VIDEO_START) % 80) == 0) {
-		while ((cursor % 79) != 0) {
-			*cursor = 0x20 + VIDEO_MASK;
-			cursor++;
+		while ((temp % 79) != 0) {
+			*temp = 0x20 + VIDEO_MASK;
+			temp++;
 		}
-		cursor -= 0x4f;
 	}
 	
+	//Logic for if statement is sound, verified with a truth table
 	if (c != CR && c != LF) {
 		*cursor = c + VIDEO_MASK;
 		cursor++;
@@ -106,7 +106,7 @@ void WriteChar(char c) {
 		cursor += remCol;
 	}
 	
-	if (cursor == (VIDEO_START + 0x78f))
+	if (cursor == ((25 * 80) + 79))
 		cursor = VIDEO_START;
 }
 
@@ -124,17 +124,21 @@ void ReadService(tf_t *tf_p) {
 //Lower half of ReadService, called by TimerService()
 void KbService(char c) {
 	int releasedPID;
+	char *strSpace;
 	WriteChar(c);
 	if (c != CR) {
 		StrAdd(c, kb.buffer);
 		return;
+	} else {	
+		StrAdd(NUL, kb.buffer);
+		releasedPID = DeQ(kb.wait_q);
+		//the string space is pointed to by 'eax' of the process TF
+		strSpace = (char *)(pcb[releasePID].tf_p).eax;
+		//call StrCpy to copy the keyboard.buffer to the process string space
+		StrCpy(kb.buffer, strSpace);
+		
+		pcb[releasedPID].state = READY;
+		EnQ(releasedPID, ready_q);
+		Bzero(kb.buffer, STR_SIZE);
 	}
-	
-	StrAdd(NUL, kb.buffer);
-	releasedPID = DeQ(kb.wait_q);
-	//the string space is pointed to by 'eax' of the process TF
-	//call StrCpy to copy the keyboard.buffer to the process string space
-	pcb[releasedPID].state = READY;
-	EnQ(releasedPID, ready_q);
-	Bzero(kb.buffer, STR_SIZE);
 }

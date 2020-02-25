@@ -76,21 +76,27 @@ void Init(void) {
 	char tPrompt[] = "The time is ";
 	char qPrompt[] = "What do you say to a cup of coffee? ";
 	char aPrompt[] = "The answer is ";
-	char time_str[] = "    ";
+	char period[] = ".\n";
+	char answer[STR_SIZE];
+	char time_str[TIME_SIZE];
 	while (1) {
 		curTime = get_time_call();
 		numToString(curTime, time_str);
-		/*
-		*	call write_call to show time_str
-		*	...
-		*	... see demo run to issue calls to perform the same...
-		*	...
-		*/
+		
+		//Doublecheck
+		
+		//Time Prompt
 		write_call(tPrompt);
 		write_call(time_str);
+		write_call(period);
+		
+		//Question Prompt
 		write_call(qPrompt);
-		read_call();
+		read_call(kb.buffer);
+		
+		//Answer Prompt
 		write_call(aPrompt);
-		read_call();
+		write_call(answer);
+		write_call(period);
 	}
 }

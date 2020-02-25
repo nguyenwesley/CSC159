@@ -18,7 +18,7 @@
 #define VIDEO_START 0xb8000							// upper-left corner
 
 // system limit stuff
-#define TIME_SIZE 300								// max timer count, then rotate process
+#define TIME_SIZE 100								// max timer count, then rotate process
 #define PROC_SIZE 20								// max number of processes
 #define STACK_SIZE 4096								// process stack in bytes
 #define Q_SIZE 20									// capacity of a process queue

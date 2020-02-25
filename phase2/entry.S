@@ -31,30 +31,27 @@ ENTRY(TimerEntry)								// push efl, cs, eip by hardware
 *
 */
 ENTRY(GetTimeEntry)
-	pushl $GET_TIME
 	pushal
 	movl %esp, %ecx
 	leal kernel_stack+KERNEL_STACK_SIZE, %esp
 	pushl %ecx
 	cld
-	call CNAME(TimerService)
+	call CNAME(GetTimeEntry)
 
 
 ENTRY(WriteEntry)
-	pushl $WRITE
 	pushal
 	movl %esp, %ecx
 	leal kernel_stack+KERNEL_STACK_SIZE, %esp
 	pushl %ecx
 	cld
-	call CNAME(TimerService)
+	call CNAME(WriteEntry)
 
 
 ENTRY(ReadEntry)
-	pushl $READ
 	pushal
 	movl %esp, %ecx
 	leal kernel_stack+KERNEL_STACK_SIZE, %esp
 	pushl %ecx
 	cld
-	call CNAME(TimerService)
+	call CNAME(ReadEntry)
