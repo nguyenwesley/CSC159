@@ -35,6 +35,18 @@
 #define CR '\r'										//Carriage Return, ASCII #13
 #define LF '\n'										//LineFeed, ASCII #10 (NewLine)
 
+
+/*
+*
+*	phase3
+*
+*/
+#define GET_PID 51									//new OS service
+#define EXIT 52										//new OS service
+#define FORK 53										//new OS service
+#define CONSOLE 99									//new OS service
+
+
 // prog logic stuff
 #define TRUE 1
 #define FALSE 0
@@ -53,6 +65,7 @@ typedef struct {
    state_t state;									// state of process
    unsigned run_tick, total_tick;					// runtime of process and lifespan
    tf_t *tf_p;               						// points to proc's trapframe
+   int stdin, stdout;								//phase3 type
 } pcb_t;                     
 
 typedef struct {									// circular queue
@@ -89,7 +102,7 @@ void TimerService(tf_t *);
 
 /*
 *
-*	phase2 void-returning prototypes w/ inpur tf_t *
+*	phase2 void-returning prototypes w/ input tf_t *
 *
 */
 void GetTimeService(tf_t *);
@@ -104,4 +117,14 @@ void ReadService(tf_t *);
 */
 void WriteChar(char c);
 void KbService(char c);
+
+
+/*
+*
+*	phase3
+*
+*/
+void GetPidService(tf_t *);
+void ExitService(tf_t *);
+void ForkService(tf_t *);
 #endif

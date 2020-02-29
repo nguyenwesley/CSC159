@@ -16,4 +16,6 @@ void Bzero(char *, int byteFillLength);
 void StrAdd(char toAdd, char *string);
 void StrCpy(char *src, char *dest);
 
+//phase3 prototypes
+void MemCpy(char *s, char *t, unsigned bytes);
 #endif

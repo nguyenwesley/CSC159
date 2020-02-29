@@ -3,7 +3,8 @@
 #ifndef __PROC__
 #define __PROC__
 
-void Clock(void);      // PID 0
-void Init(void); 
+void Clock(void);			// PID 0
+void Init(void);
+void Shell(void);			//phase3
 
 #endif

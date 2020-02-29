@@ -80,6 +80,7 @@ void StrAdd(char toAdd, char *string[]) {
 }
 
 
+//Modify for phase3??
 //phase2 function
 void StrCpy(char *src, char *dest) {
 	//Make copy
@@ -90,4 +91,10 @@ void StrCpy(char *src, char *dest) {
 	if (dest != NUL)
 		*dest = NUL;
 	dest--;
+}
+
+
+//phase3 function
+void MemCpy(char *s, char *t, unsigned bytes) {
+	//duplicate bytes from Source to Target, Assume Target has enough space
 }
