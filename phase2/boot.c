@@ -63,7 +63,7 @@ void main(void) {				// kernel boots
 	*	phase2
 	*
 	*/
-	Bzero(kb, sizeof(kb_t));
+	Bzero((char *)&kb, sizeof(kb_t));
 	(kb.wait_q).head = (kb.wait_q).tail = (kb.wait_q).size = 0;
 	
 	unused_q.head = unused_q.tail = unused_q.size = 0;
