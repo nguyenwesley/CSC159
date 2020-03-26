@@ -78,7 +78,7 @@ void Init(void) {
 	char aPrompt[] = "The answer is ";
 	char period[] = ".\n";
 	char answer[STR_SIZE];
-	char time_str[TIME_SIZE];
+	char time_str[] = "    ";
 	while (1) {
 		curTime = get_time_call();
 		numToString(curTime, time_str);

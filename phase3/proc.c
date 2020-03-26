@@ -78,7 +78,7 @@ void Init(void) {
 	char aPrompt[] = "The answer is ";
 	char period[] = ".\n";
 	char answer[STR_SIZE];
-	char time_str[TIME_SIZE];
+	char time_str[] = "    ";
 	while (1) {
 		curTime = get_time_call();
 		numToString(curTime, time_str);
@@ -100,3 +100,43 @@ void Init(void) {
 		write_call(period);
 	}
 }
+
+
+//phase3
+void Shell(void) {
+	int time, my_pid;
+	
+	/*
+	*	declare a cmd str with STR_SIZE
+	*
+	*	infinite loop
+	*		declare a pid string that can show two digits, and
+	*		a time string that can show 4 digits
+	*
+	*		get time and convert it to a string
+	*		get my PID and convert it to a string
+	*
+	*		write out the two strings, and the prompt (see demo)
+	*	
+	*		get input to a command string input
+	*		write out which PID is getting what command (see demo)
+	*
+	*		if command string is 'exit'
+	*			write out my PID and message exiting (see demo)
+	*			call the exit service
+	*
+	*		if command string is NOT 'fork,' 'continue' to top
+	*
+	*		call ? = fork_call
+	*		if the return is NA, write "fork failed!\n"
+	*		else if the return is zero, write "I'm a new child process.\n"
+	*		else write "I'm a parent process.\n"
+	*	loop ends
+	*/
+}
+
+
+/*
+*	program StrCmp() given two char * (strings), and it returns TRUE
+*	if they match, otherwise FALSE
+*/

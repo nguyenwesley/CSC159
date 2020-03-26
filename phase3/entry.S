@@ -36,7 +36,7 @@ ENTRY(GetTimeEntry)
 	leal kernel_stack+KERNEL_STACK_SIZE, %esp
 	pushl %ecx
 	cld
-	call CNAME(GetTimeEntry)
+	call CNAME(GetTimeService)
 
 
 ENTRY(WriteEntry)
@@ -45,7 +45,7 @@ ENTRY(WriteEntry)
 	leal kernel_stack+KERNEL_STACK_SIZE, %esp
 	pushl %ecx
 	cld
-	call CNAME(WriteEntry)
+	call CNAME(WriteService)
 
 
 ENTRY(ReadEntry)
@@ -54,4 +54,38 @@ ENTRY(ReadEntry)
 	leal kernel_stack+KERNEL_STACK_SIZE, %esp
 	pushl %ecx
 	cld
-	call CNAME(ReadEntry)
+	call CNAME(ReadService)
+
+
+
+/*
+*
+*	phase3
+*
+*/
+ENTRY(GetPidEntry)
+	pushal
+	movl %esp, %ecx
+	leal kernel_stack+KERNEL_STACK_SIZE, %esp
+	pushl %ecx
+	cld
+	call CNAME(GetPidService)
+
+
+ENTRY(ExitEntry)
+	pushal
+	movl %esp, %ecx
+	leal kernel_stack+KERNEL_STACK_SIZE, %esp
+	pushl %ecx
+	cld
+	call CNAME(ExitService)
+
+
+ENTRY(ForkEntry)
+	pushal
+	movl %esp, %ecx
+	leal kernel_stack+KERNEL_STACK_SIZE, %esp
+	pushl %ecx
+	cld
+	call CNAME(ForkService)
+

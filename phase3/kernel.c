@@ -18,7 +18,8 @@ void TimerService(tf_t *tfProcess) {
 	
 	if (cons_kbhit()) {
 		char ch = cons_getchar();
-		if (ch == 'g')
+		//change 'g' to 'G' for phase3
+		if (ch == 'G')
 			breakpoint();
 		
 		/*
@@ -26,7 +27,7 @@ void TimerService(tf_t *tfProcess) {
 		*	phase2
 		*
 		*/
-		if (QisEmpty(kb.wait_q) != TRUE)
+		if (QisEmpty((q_t *)&kb.wait_q) != TRUE)
 			KbService(ch);
 	}
 
@@ -67,53 +68,56 @@ void Swapper() {
 *
 */
 void GetTimeService(tf_t *tf_p) {
-	tf_p.eax = (sys_tick / 100);
+	(*tf_p).eax = (sys_tick / 100);
 	Loader(tf_p);
 }
 
 
 void WriteService(tf_t *tf_p) {
-	char *strAddr = (char *)(tf_p).eax;
-	while (*strAddr != '\0') {
-		WriteChar(strAddr);
-		strAddr++;
+	//Doublecheck
+	while ((*tf_p).eax != '\0') {
+		WriteChar((*tf_p).eax);
+		(*tf_p).eax++;
 	}
 	Loader(tf_p);
 }
 
 
 void WriteChar(char c) {
-	static unsigned short *cursor = (typecast)VIDEO_START;
+	static unsigned short *cursor = (unsigned short *) VIDEO_START;
 	int curColPos;
 	int remCol;
-	unsigned short *temp = *cursor;
+	int counter = 0;
+	
 	//May need to adjust numbers
-	if (((cursor - VIDEO_START) % 80) == 0) {
-		while ((temp % 79) != 0) {
-			*temp = 0x20 + VIDEO_MASK;
-			temp++;
+	if (((cursor - ((unsigned short *) VIDEO_START)) % 80) == 0) {
+		while (counter != 79) {
+			*cursor = 0x20 + VIDEO_MASK;
+			cursor++;
+			counter++;
 		}
+		counter = 0;
+		cursor -= 0x4f;
 	}
 	
-	//Logic for if statement is sound, verified with a truth table
 	if (c != CR && c != LF) {
 		*cursor = c + VIDEO_MASK;
 		cursor++;
 	}
 	else {
-		curColPos = (cursor - VIDEO_START) % 80;
+		curColPos = (cursor - ((unsigned short *) VIDEO_START)) % 80;
 		remCol = 80 - curColPos;
 		cursor += remCol;
 	}
 	
-	if (cursor == ((25 * 80) + 79))
-		cursor = VIDEO_START;
+	if (cursor == (((unsigned short *) VIDEO_START) + 0x78f))
+		cursor = ((unsigned short *) VIDEO_START);
 }
 
 
 void ReadService(tf_t *tf_p) {
 	pcb[cur_pid].tf_p = tf_p;
-	EnQ(cur_pid, kb.wait_q);
+	EnQ(cur_pid, (q_t *)&kb.wait_q);
 	pcb[cur_pid].state = WAIT;
 	cur_pid = NA;
 	Swapper();
@@ -124,21 +128,80 @@ void ReadService(tf_t *tf_p) {
 //Lower half of ReadService, called by TimerService()
 void KbService(char c) {
 	int releasedPID;
-	char *strSpace;
 	WriteChar(c);
 	if (c != CR) {
 		StrAdd(c, kb.buffer);
 		return;
-	} else {	
-		StrAdd(NUL, kb.buffer);
-		releasedPID = DeQ(kb.wait_q);
-		//the string space is pointed to by 'eax' of the process TF
-		strSpace = (char *)(pcb[releasePID].tf_p).eax;
-		//call StrCpy to copy the keyboard.buffer to the process string space
-		StrCpy(kb.buffer, strSpace);
-		
-		pcb[releasedPID].state = READY;
-		EnQ(releasedPID, ready_q);
-		Bzero(kb.buffer, STR_SIZE);
 	}
+	
+	StrAdd(NUL, kb.buffer);
+	releasedPID = DeQ((q_t *)&kb.wait_q);
+	//the string space is pointed to by 'eax' of the process TF
+	//call StrCpy to copy the keyboard.buffer to the process string space
+	StrCpy(kb.buffer, (char *)(*pcb[releasedPID].tf_p).eax);
+	
+	pcb[releasedPID].state = READY;
+	EnQ(releasedPID, (q_t *)&ready_q);
+	Bzero(kb.buffer, STR_SIZE);
+}
+
+
+/*
+*
+*	phase3
+*
+*/
+void GetPidService(tf_t *tf_p) {
+	/*
+	*	copy cur_pid into the eax of the trapframe that tf_p points to
+	*	resume to run the same process
+	*/
+}
+
+
+void ExitService(tf_t *tf_p) {
+	/*
+	*	reset the state of the running process, and
+	*	reclaim the PID
+	*	call Swapper to find another process to run
+	*	call Loader to load its trapframe (to run)
+	*/
+}
+
+
+void ForkService(tf_t *tf_p) {
+	/*
+	*	get a new Child pid from the unused PID queue
+	*	if it's NA {
+	*		copy NA to eax of trapframe (TF) using the given TF pointer
+	*		resume to run the calling process
+	*	}
+	*
+	*	Parent's eax in its TF = new Child PID
+	*	add new Child pid to ready-to-run process queue
+	*	
+	*	Child gets a duplicate PCB from Parent
+	*	set Child process state to READY
+	*	set 'ppid' in Child's PCB to the calling process PID
+	*	reset run_tick & total_tick of Child process
+	*
+	*	Child gets a duplicate of Parent's runtime stack
+	*	calculate the stack distance between Child's and Parent's stacks
+	*
+	*	calculate Child's TF addr = TF ptr given to this function + stack distance
+	*	add stack distance to ebp of Child's TF
+	*
+	*	in order to update all ebp in a nested subroutine calls (if occurred):
+	*		use an integer pointer
+	*		set it = the updated ebp (ebp is typecasted as an integer address)
+	*		loop:
+	*			if what the pointer points is not zero
+	*			add stack distance to that non-zero value
+	*			set the pointer = the updated value
+	*			repeat the loop
+	*
+	*	Child's eax in its TF gets zero
+	*
+	*	resume to run the same process (Parent)
+	*/
 }

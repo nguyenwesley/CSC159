@@ -33,13 +33,16 @@ void CreateProc(func_p_t *functionPT) {
 	int pid;
 	pid = DeQ(&unused_q);
 	EnQ(pid, &ready_q);
-	
+
 	//clear both the PCB and stack for the new PID
 	Bzero((char *)&pcb[cur_pid], sizeof(pcb_t));
 	Bzero(&stack[cur_pid][0], PROC_SIZE);
 	
 	//set its state to READY
 	pcb[cur_pid].state = READY;
+	
+	//phase3, initialize stdin and stdout
+	pcb[cur_pid].stdin = pcb[cur_pid].stdout = CONSOLE;
 	
 	//point its tf_p to the correct place in its stack
 	pcb[cur_pid].tf_p = (tf_t *)&stack[cur_pid][STACK_SIZE - sizeof(tf_t)];
@@ -63,7 +66,7 @@ void main(void) {				// kernel boots
 	*	phase2
 	*
 	*/
-	Bzero(kb, sizeof(kb_t));
+	Bzero((char *)&kb, sizeof(kb_t));
 	(kb.wait_q).head = (kb.wait_q).tail = (kb.wait_q).size = 0;
 	
 	unused_q.head = unused_q.tail = unused_q.size = 0;
@@ -82,11 +85,20 @@ void main(void) {				// kernel boots
 	fill_gate(&intr_table[TIMER], (int)WriteEntry, get_cs(), ACC_INTR_GATE, 0);
 	fill_gate(&intr_table[TIMER], (int)ReadEntry, get_cs(), ACC_INTR_GATE, 0);
 	
+	//phase3, add 3 new entries into the intr_table
+	fill_gate(&intr_table[TIMER], (int)GetPidEntry, get_cs(), ACC_INTR_GATE, 0);
+	fill_gate(&intr_table[TIMER], (int)ExitEntry, get_cs(), ACC_INTR_GATE, 0);
+	fill_gate(&intr_table[TIMER], (int)ForkEntry, get_cs(), ACC_INTR_GATE, 0);
+	
 	outportb(PIC_MASK_REG, PIC_MASK);
 
    	CreateProc((func_p_t *) Clock);
 	//phase2, call CreateProc to make Init
 	CreateProc((func_p_t *) Init);
+	
+	//phase3, call CreateProc to make Shell (instead of Init)
+	CreateProc((func_p_t *) Shell);
+	
 	cur_pid = DeQ(&ready_q);
 	Loader(pcb[cur_pid].tf_p);
 }
