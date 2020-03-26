@@ -61,7 +61,7 @@ void SetData() {
 	
     // Ensure that all processes are initially in our unused queue
     // State of processes should be UNUSED
-	for (i = 0; i < Q_SIZE - 1; i++)
+	for (i = 0; i < Q_SIZE; i++)
 	{
 		enqueue(i, &unused_q);
 		pcb[i].state = UNUSED;
