@@ -1,3 +1,4 @@
+  
 #ifndef _EXTERN_H_
 #define _EXTERN_H_
 
@@ -20,4 +21,12 @@ extern pcb_t pcb[MAX_PROC];
 // runtime stacks of processes
 extern char stack[MAX_PROC][STACK_SIZE];
 
+
+// Phase2: mailboxes and semaphores
+extern mbox_t mbox_arr[MBOX_SIZE];
+extern semaphore_t sem_arr[MAX_PROC];
+extern q_t sem_q;
+
+extern int semGetID;
+extern int critSec;
 #endif

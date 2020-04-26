@@ -8,5 +8,8 @@ void bzero(char *, int);
 int dequeue(q_t *);
 void enqueue(int, q_t *);
 
-#endif
+//Added for Phase 2
+void msg_enqueue(msg_t *, mbox_t *); 
+msg_t *msg_dequeue(mbox_t *); 
 
+#endif

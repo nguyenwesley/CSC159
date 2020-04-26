@@ -16,6 +16,15 @@ q_t run_q;
 q_t unused_q;
 q_t sleep_q;
 
+
+//Phase2 variables
+mbox_t mbox_arr[MBOX_SIZE];
+semaphore_t sem_arr[MAX_PROC];
+q_t sem_q;
+
+int semGetID = -1;
+int critSec;
+
 // Process table
 pcb_t pcb[MAX_PROC];
 
@@ -34,6 +43,10 @@ int main() {
 
     // Create InitProc
     NewProcISR();
+	
+	//Create 2 new system processes: PrinterProc and DispatcherProc
+	NewProcISR();
+	NewProcISR();
 
     // Run initial scheduler & Loader
     Scheduler();
@@ -57,11 +70,15 @@ void SetData() {
 	bzero((char *)&unused_q, Q_SIZE);
 	bzero((char *)&sleep_q, Q_SIZE);
 	
+	//Clearing queues for phase2
+	bzero((char *)&sem_q, Q_SIZE);
+	
     // Ensure that all processes are initially in our unused queue
     // State of processes should be UNUSED
 	for (i = 0; i < Q_SIZE; i++)
 	{
 		enqueue(i, &unused_q);
+		enqueue(i, &sem_q);
 		pcb[i].state = UNUSED;
 	}
 	
@@ -82,6 +99,13 @@ void SetControl() {
 	SetEntry(GETTIME_INTR, GetTimeEntry);
 	SetEntry(SLEEP_INTR, SleepEntry);
 
+	//Adding entries for phase2
+	SetEntry(SEMGET_INTR, SemGetEntry);
+	SetEntry(SEMPOST_INTR, SemPostEntry);
+	SetEntry(SEMWAIT_INTR, SemWaitEntry);
+	SetEntry(MSGSEND_INTR, MsgSendEntry);
+	SetEntry(MSGRECV_INTR, MsgRecvEntry);
+	
     // Clear the PIC mask
     outportb(0x21, ~1);
 }
@@ -92,13 +116,7 @@ void Scheduler() {
 	if (run_pid != -1)
 		return;
 
-    // If we have a process in the running queue
-    //   Dequeue the process from the running queue and set it to the running pid
-    //
-    //   Set the state in the process control block to RUN
-    // else
-    //   If we have no processes running, our kernel should panic
-    //   we should trigger a breakpoint for debugging
+
 	if (run_q.size != 0)
 	{
 		run_pid = dequeue(&run_q);
@@ -131,10 +149,6 @@ void Kernel(trapframe_t *p) {
             outportb(0x20, 0x60);
             break;
 
-        // Add other interrupts for system calls:
-        //   GetPidISR()
-        //   GetTimeISR()
-        //   SleepISR()
 		case GETPID_INTR:
 			//Call GetPIDISR
 			GetPidISR();
@@ -148,6 +162,28 @@ void Kernel(trapframe_t *p) {
 		case SLEEP_INTR:
 			//Call SleepISR
 			SleepISR();
+			break;
+		
+		
+		//Add INTRs for phase2
+		case SEMGET_INTR:
+			SemGetISR();
+			break;
+			
+		case SEMPOST_INTR:
+			SemPostISR();
+			break;
+			
+		case SEMWAIT_INTR:
+			SemWaitISR();
+			break;
+		
+		case MSGSEND_INTR:
+			MsgSendISR();
+			break;
+			
+		case MSGRECV_INTR:
+			MsgRecvISR();
 			break;
 			
         default:
@@ -184,4 +220,3 @@ void Kernel(trapframe_t *p) {
     Scheduler();
     Loader(pcb[run_pid].trapframe_p);
 }
-

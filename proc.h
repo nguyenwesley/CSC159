@@ -4,4 +4,8 @@
 void InitProc();
 void UserProc();
 
+
+//Phase2 Procs
+void PrinterProc();
+void DispatcherProc();
 #endif

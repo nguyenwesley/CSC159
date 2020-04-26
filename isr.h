@@ -13,4 +13,15 @@ void GetPidISR();
 void GetTimeISR();
 void SleepISR();
 
+
+
+//Semaphore ISRs
+void SemGetISR();
+void SemPostISR();
+void SemWaitISR();
+
+//Mailbox ISRs
+void MsgSendISR();
+void MsgRecvISR();
+
 #endif

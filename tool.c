@@ -55,3 +55,51 @@ int dequeue(q_t *p) {
 
     return pid;
 }
+
+//Added for Phase 2
+void msg_enqueue(msg_t *msg_p, mbox_t *mbox_p) {
+    // Can't enqueue if the mailbox is full
+    if (mbox_p->size == MBOX_SIZE) {
+        cons_printf("Mailbox is full\n");
+        return;
+    }
+
+    // Add the message to the mailbox queue
+    mbox_p->msg[mbox_p->tail] = *msg_p;
+
+    // Advance the tail to the next mailbox entry
+    mbox_p->tail++;
+
+    // If the end of the mailbox queue is reached, reset tail to the start
+    if (mbox_p->tail == MBOX_SIZE) {
+        mbox_p->tail = 0;
+    }
+
+    // Increment the size
+    mbox_p->size++;
+}
+
+msg_t *msg_dequeue(mbox_t *mbox_p) {
+    msg_t *msg_p;
+
+    if (mbox_p->size == 0) {
+        // mailbox is empty
+        return NULL;
+    }
+
+    // Get the first message in the mailbox queue
+    msg_p = &mbox_p->msg[mbox_p->head];
+
+    // Advance the head to the next mailbox entry
+    mbox_p->head++;
+
+    // If the end of the mailbox queue is reached, reset head to the start
+    if (mbox_p->head == MBOX_SIZE) {
+        mbox_p->head = 0;
+    }
+
+    // Decrement queue size since we pulled an item off
+    mbox_p->size--;
+
+    return msg_p;
+}

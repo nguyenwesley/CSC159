@@ -8,6 +8,9 @@
 #define Q_SIZE MAX_PROC      // queuing capacity; always ensure we have enough for our processes
 #define STACK_SIZE 8196      // process runtime stack in bytes
 
+//Define for phase2
+#define MBOX_SIZE MAX_PROC
+
 // this is the same as constants defines: UNUSED=0, READY=1, etc.
 typedef enum {
     UNUSED,
@@ -38,5 +41,26 @@ typedef struct {
 } q_t;
 
 typedef void (*func_ptr_t)(); // void-return function pointer type
+
+
+//Added these data types for Phase 2 implementation
+typedef struct {
+	int count;				// access count
+    q_t wait_q;				// waiting processes
+} semaphore_t;
+
+typedef struct {
+    int sender;				// sending process PID
+    int time_stamp;			// time sent
+    int data;				// just an integer for now   
+} msg_t;
+
+typedef struct {
+    msg_t msg[MBOX_SIZE];	// mailbox size (max number of messages)
+    int head;				// queue head
+    int tail;				// queue tail
+    int size;				// queue size
+    q_t wait_q;				// waiting processes
+} mbox_t;
 
 #endif _TYPE_H_
